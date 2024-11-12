@@ -2,13 +2,14 @@ import os
 from typing import Optional
 from pydantic import SecretStr
 
+from langchain_core._api import beta
 from langchain.tools import BaseTool
 
 from pangea import PangeaConfig
 from pangea.services import AIGuard
 
+@beta(message="Pangea AI Guard service is in beta. Subject to change.")
 class PangeaAIGuard(BaseTool):
-
     """
     Uses Pangea's AI Guard service to monitor, sanitize, and protect sensitive data.
 

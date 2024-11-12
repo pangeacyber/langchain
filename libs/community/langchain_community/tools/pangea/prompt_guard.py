@@ -2,6 +2,7 @@ import os
 from typing import Optional
 from pydantic import SecretStr
 
+from langchain_core._api import beta
 from langchain.tools import BaseTool
 from langchain_core.messages import (
     AIMessage,
@@ -13,6 +14,8 @@ from langchain_core.messages import (
     ToolMessage,
 )
 from langchain_core.prompt_values import PromptValue
+
+
 
 try:
     from pangea import PangeaConfig
@@ -27,7 +30,7 @@ class MaliciousPromptError(RuntimeError):
     def __init__(self, message: str) -> None:
         super().__init__(message)
 
-
+@beta(message="Pangea Prompt Guard service is in beta. Subject to change.")
 class PangeaPromptGuard(BaseTool):
     """
     Uses Pangea's Prompt Guard service to defend against prompt injection.
