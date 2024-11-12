@@ -14,9 +14,9 @@ except ImportError as e:
     ) from e
 
 
-class MaliciousDomainsError(RuntimeError):
+class PangeaDomainGuardError(RuntimeError):
     """
-    MaliciousDomainsError is a exception raised when malicious domains are found in the input text.
+    Exception raised for unexpected scenarios or when malicious IPs are found.
     """
     def __init__(self, message: str) -> None:
         super().__init__(message)
@@ -91,11 +91,13 @@ class PangeaDomainIntelGuard(BaseTool):
 
         # Check the reputation of each Domain found
         intel = self._domain_intel_client.reputation_bulk(domains)
-        assert intel.result
+
+        if not intel.result:
+            raise PangeaDomainGuardError("Result is invalid or missing")
 
         # Check if the score is higher than the set threshold for any domain
         if any(domain_data.score >= self._threshold for domain_data in intel.result.data.values()):
-            raise MaliciousDomainsError("Malicious domains found in the provided input.")
+            raise PangeaDomainGuardError("Malicious domains found in the provided input.")
 
         # Return unchanged input_text
         return input_text

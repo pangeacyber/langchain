@@ -14,7 +14,10 @@ except ImportError as e:
     ) from e
 
 
-class MaliciousIpAddressesError(RuntimeError):
+class PangeaIpGuardError(RuntimeError):
+    """
+    Exception raised for unexpected scenarios or when malicious IPs are found.
+    """
     def __init__(self, message: str) -> None:
         super().__init__(message)
 
@@ -88,11 +91,13 @@ class PangeaIpIntelGuard(BaseTool):
 
         # Check the reputation of each Ip found
         intel = self._ip_intel_client.reputation_bulk(ips)
-        assert intel.result
+        
+        if not intel.result:
+            raise PangeaIpGuardError("Result is invalid or missing")
 
         # Check if the score is higher than the set threshold for any ip
         if any(ip_data.score >= self._threshold for ip_data in intel.result.data.values()):
-            raise MaliciousIpAddressesError("Malicious IPs found in the provided input.")
+            raise PangeaIpGuardError("Malicious IPs found in the provided input.")
 
         # Return unchanged input_text
         return input_text

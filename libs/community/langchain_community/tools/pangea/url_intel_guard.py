@@ -14,7 +14,11 @@ except ImportError as e:
     ) from e
 
 
-class MaliciousUrlsError(RuntimeError):
+class PangeaUrlGuardError(RuntimeError):
+    """
+    PangeaUrlGuardError is a exception raised in an unexpected scenario or 
+    when malicious URLs are found in the input text.
+    """
     def __init__(self, message: str) -> None:
         super().__init__(message)
 
@@ -88,11 +92,13 @@ class PangeaUrlIntelGuard(BaseTool):
 
         # Check the reputation of each URL found
         intel = self._url_intel_client.reputation_bulk(urls)
-        assert intel.result
+
+        if not intel.result:
+            raise PangeaUrlGuardError("Result is invalid or missing")
 
         # Check if the score is higher than the set threshold for any url
         if any(url_data.score >= self._threshold for url_data in intel.result.data.values()):
-            raise MaliciousUrlsError("Malicious URLs found in the provided input.")
+            raise PangeaUrlGuardError("Malicious URLs found in the provided input.")
 
         # Return unchanged input_text
         return input_text

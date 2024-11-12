@@ -12,6 +12,13 @@ except ImportError as e:
         "Cannot import pangea, please install `pip install pangea-sdk==5.1.0`."
     ) from e
 
+class PangeaRedactGuardError(RuntimeError):
+    """
+    Exception raised for unexpected scenarios.
+    """
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+
 
 class PangeaRedactGuard(BaseTool):
     """
@@ -76,7 +83,9 @@ class PangeaRedactGuard(BaseTool):
     def _run(self, input_text: str) -> str:
         # Redact the input_text
         redacted = self._redact_client.redact(text=input_text)
-        assert redacted.result
+
+        if not redacted.result:
+            raise PangeaRedactGuardError("Result is invalid or missing")
 
         # Return the redacted text or the input_text if no redacted text is found
         return redacted.result.redacted_text or input_text
