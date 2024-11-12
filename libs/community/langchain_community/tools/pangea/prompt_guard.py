@@ -47,7 +47,7 @@ class PangeaPromptGuard(BaseTool):
 
             # Initialize parameters
             pangea_token = SecretStr(os.getenv("PANGEA_PROMPT_GUARD_TOKEN"))
-            config = PangeaConfig(domain="gcp.us.pangea.cloud")
+            config = PangeaConfig(domain="aws.us.pangea.cloud")
 
             # Setup Pangea Redact Tool Guard
             prompt_guard = PangeaPromptGuard(pangea_token=pangea_token, config_id="", config=config)

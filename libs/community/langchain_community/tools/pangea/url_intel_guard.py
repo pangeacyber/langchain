@@ -37,7 +37,7 @@ class PangeaUrlIntelGuard(BaseTool):
 
             # Initialize parameters
             pangea_token = SecretStr(os.getenv("PANGEA_URL_INTEL_TOKEN"))
-            config = PangeaConfig(domain="gcp.us.pangea.cloud")
+            config = PangeaConfig(domain="aws.us.pangea.cloud")
 
             # Setup Pangea Url Intel Tool
             tool = PangeaUrlIntelGuard(pangea_token=pangea_token, config_id="", config=config)

@@ -31,7 +31,7 @@ class PangeaAIGuard(BaseTool):
 
             # Initialize parameters
             pangea_token = SecretStr(os.getenv("PANGEA_AI_GUARD_TOKEN"))
-            config = PangeaConfig(domain="gcp.us.pangea.cloud")
+            config = PangeaConfig(domain="aws.us.pangea.cloud")
 
             # Setup Pangea Redact Tool Guard
             ai_guard = PangeaAIGuard(pangea_token=pangea_token, config_id="", config=config, recipe="pangea_prompt_guard")

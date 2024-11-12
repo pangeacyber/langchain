@@ -39,7 +39,7 @@ class PangeaDomainIntelGuard(BaseTool):
 
             # Initialize parameters
             pangea_token = SecretStr(os.getenv("PANGEA_DOMAIN_INTEL_TOKEN"))
-            config = PangeaConfig(domain="gcp.us.pangea.cloud")
+            config = PangeaConfig(domain="aws.us.pangea.cloud")
 
             # Setup Pangea Domain Intel Tool
             tool = PangeaDomainIntelGuard(pangea_token=pangea_token, config_id="", config=config)
