@@ -30,17 +30,18 @@ class PangeaIpIntelGuard(BaseTool):
           or passed as a named parameter to the constructor.
 
     How to use:
-        import os
-        from langchain_community.tools.pangea.ip_intel_guard import PangeaIpIntelGuard
-        from pydantic import SecretStr
+        .. code-block:: python
+            import os
+            from langchain_community.tools.pangea.ip_intel_guard import PangeaIpIntelGuard
+            from pydantic import SecretStr
 
-        # Initialize parameters
-        pangea_token = SecretStr(os.getenv("PANGEA_IP_INTEL_TOKEN"))
-        config = PangeaConfig(domain="gcp.us.pangea.cloud")
+            # Initialize parameters
+            pangea_token = SecretStr(os.getenv("PANGEA_IP_INTEL_TOKEN"))
+            config = PangeaConfig(domain="gcp.us.pangea.cloud")
 
-        # Setup Pangea Ip Intel Tool
-        tool = PangeaIpIntelGuard(pangea_token=pangea_token, config_id="", config=config)
-        tool.run("Please click here to confirm your order:http://113.235.101.11:54384/order/123 .  Leave us a feedback here: http://malware123.com/feedback")
+            # Setup Pangea Ip Intel Tool
+            tool = PangeaIpIntelGuard(pangea_token=pangea_token, config_id="", config=config)
+            tool.run("Please click here to confirm your order:http://113.235.101.11:54384/order/123 .  Leave us a feedback here: http://malware123.com/feedback")
     """
 
     name: str = "Pangea Ip Intel Tool"

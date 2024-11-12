@@ -1,6 +1,3 @@
-import os
-from typing import Any, Dict, List
-
 from pydantic import SecretStr
 
 import pytest
@@ -35,14 +32,14 @@ def test_redact_tool(pangea_redact_guard: PangeaRedactGuard) -> None:
     prompt = "My name is Dennis Nedry and my email is you.didnt.say.the.magic.word@gmail.com"
     expected = "My name is <PERSON> and my email is <EMAIL_ADDRESS>"
     response = pangea_redact_guard.run(prompt)
-    assert response == expected, f"Erorr: {response}"
+    assert response == expected, f"Error: {response}"
 
 # Invoke redact as a runnable for chains
 def test_redact_runnable(pangea_redact_guard: PangeaRedactGuard) -> None:
     prompt = "My name is Dennis Nedry and my email is you.didnt.say.the.magic.word@gmail.com"
     expected = "My name is <PERSON> and my email is <EMAIL_ADDRESS>"
     response = pangea_redact_guard.invoke(prompt)
-    assert response == expected, f"Erorr: {response}"
+    assert response == expected, f"Error: {response}"
 
 
 # Pangea Domain Intel integration tests
@@ -134,11 +131,11 @@ def test_ai_guard_tool(pangea_ai_guard: PangeaAIGuard) -> None:
     prompt = "My Name is John Doe and my email is john.doe@email.com.  My credit card number is 5555555555554444."
     expected = "My Name is <PERSON> and my email is john.doe@email.com.  My credit card number is ****************."
     response = pangea_ai_guard.run(prompt)
-    assert response == expected, f"Erorr: {response}"
+    assert response == expected, f"Error: {response}"
 
 # Run URL as a runnable for chains
 def test_ai_guard_runnable(pangea_ai_guard: PangeaAIGuard) -> None:
     prompt = "My Name is John Doe and my email is john.doe@email.com.  My credit card number is 5555555555554444."
     expected = "My Name is <PERSON> and my email is john.doe@email.com.  My credit card number is ****************."
     response = pangea_ai_guard.invoke(prompt)
-    assert response == expected, f"Erorr: {response}"
+    assert response == expected, f"Error: {response}"

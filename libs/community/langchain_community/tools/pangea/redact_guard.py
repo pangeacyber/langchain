@@ -24,22 +24,23 @@ class PangeaRedactGuard(BaseTool):
           or passed as a named parameter to the constructor.
 
     How to use:
-        import os
-        from langchain_community.tools.pangea.redact_guard import PangeaRedactGuard, PangeaConfig
-        from pydantic import SecretStr
+        .. code-block:: python
+            import os
+            from langchain_community.tools.pangea.redact_guard import PangeaRedactGuard, PangeaConfig
+            from pydantic import SecretStr
 
-        # Initialize parameters
-        pangea_token = SecretStr(os.getenv("PANGEA_REDACT_TOKEN"))
-        config = PangeaConfig(domain="gcp.us.pangea.cloud")
+            # Initialize parameters
+            pangea_token = SecretStr(os.getenv("PANGEA_REDACT_TOKEN"))
+            config = PangeaConfig(domain="gcp.us.pangea.cloud")
 
-        # Setup Pangea Redact Tool Guard
-        redact_guard = PangeaRedactGuard(pangea_token=pangea_token, config_id="", config=config)
+            # Setup Pangea Redact Tool Guard
+            redact_guard = PangeaRedactGuard(pangea_token=pangea_token, config_id="", config=config)
 
-        # Run as a tool for agents
-        redact_guard.run("My name is Dennis Nedry and my email is you.didnt.say.the.magic.word@gmail.com")
+            # Run as a tool for agents
+            redact_guard.run("My name is Dennis Nedry and my email is you.didnt.say.the.magic.word@gmail.com")
 
-        # Run as a Runnable for chains
-        redact_guard.invoke("My name is Dennis Nedry and my email is you.didnt.say.the.magic.word@gmail.com")
+            # Run as a Runnable for chains
+            redact_guard.invoke("My name is Dennis Nedry and my email is you.didnt.say.the.magic.word@gmail.com")
     """
 
     name: str = "Pangea Redact Tool"

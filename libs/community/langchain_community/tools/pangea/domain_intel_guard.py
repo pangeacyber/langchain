@@ -32,17 +32,18 @@ class PangeaDomainIntelGuard(BaseTool):
           or passed as a named parameter to the constructor.
 
     How to use:
-        import os
-        from langchain_community.tools.pangea import PangeaDomainIntelGuard, PangeaConfig
-        from pydantic import SecretStr
+        .. code-block:: python
+            import os
+            from langchain_community.tools.pangea import PangeaDomainIntelGuard, PangeaConfig
+            from pydantic import SecretStr
 
-        # Initialize parameters
-        pangea_token = SecretStr(os.getenv("PANGEA_DOMAIN_INTEL_TOKEN"))
-        config = PangeaConfig(domain="gcp.us.pangea.cloud")
+            # Initialize parameters
+            pangea_token = SecretStr(os.getenv("PANGEA_DOMAIN_INTEL_TOKEN"))
+            config = PangeaConfig(domain="gcp.us.pangea.cloud")
 
-        # Setup Pangea Domain Intel Tool
-        tool = PangeaDomainIntelGuard(pangea_token=pangea_token, config_id="", config=config)
-        tool.run("Please click here to confirm your order:http://737updatesboeing.com/order/123 .  Leave us a feedback here: http://malware123.com/feedback")
+            # Setup Pangea Domain Intel Tool
+            tool = PangeaDomainIntelGuard(pangea_token=pangea_token, config_id="", config=config)
+            tool.run("Please click here to confirm your order:http://737updatesboeing.com/order/123 .  Leave us a feedback here: http://malware123.com/feedback")
     """
 
     name: str = "Pangea Domain Intel Tool"
