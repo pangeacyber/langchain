@@ -9,7 +9,7 @@ try:
     from pangea.services import Redact
 except ImportError as e:
     raise ImportError(
-        "Cannot import pangea, please install `pip install pangea-sdk==5.2.0b2`."
+        "Cannot import pangea, please install `pip install pangea-sdk==5.1.0`."
     ) from e
 
 
@@ -30,7 +30,7 @@ class PangeaRedactGuard(BaseTool):
 
         # Initialize parameters
         pangea_token = SecretStr(os.getenv("PANGEA_REDACT_TOKEN"))
-        config = PangeaConfig(domain="dev.aws.pangea.cloud")
+        config = PangeaConfig(domain="gcp.us.pangea.cloud")
 
         # Setup Pangea Redact Tool Guard
         redact_guard = PangeaRedactGuard(pangea_token=pangea_token, config_id="", config=config)
@@ -66,7 +66,7 @@ class PangeaRedactGuard(BaseTool):
             pangea_token = SecretStr(os.getenv(pangea_token_env_key_name, ""))
 
         if not pangea_token or not pangea_token.get_secret_value() or pangea_token.get_secret_value() == "":
-            raise ValueError(f"'{pangea_token_env_key_name}' must be or set or passed")
+            raise ValueError(f"'{pangea_token_env_key_name}' must be set or passed")
 
         super().__init__()
 

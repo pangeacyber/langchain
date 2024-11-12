@@ -10,7 +10,7 @@ try:
     from pangea.services import IpIntel
 except ImportError as e:
     raise ImportError(
-        "Cannot import pangea, please install `pip install pangea-sdk==5.2.0b2`."
+        "Cannot import pangea, please install `pip install pangea-sdk==5.1.0`."
     ) from e
 
 
@@ -36,7 +36,7 @@ class PangeaIpIntelGuard(BaseTool):
 
         # Initialize parameters
         pangea_token = SecretStr(os.getenv("PANGEA_IP_INTEL_TOKEN"))
-        config = PangeaConfig(domain="dev.aws.pangea.cloud")
+        config = PangeaConfig(domain="gcp.us.pangea.cloud")
 
         # Setup Pangea Ip Intel Tool
         tool = PangeaIpIntelGuard(pangea_token=pangea_token, config_id="", config=config)
@@ -69,7 +69,7 @@ class PangeaIpIntelGuard(BaseTool):
             pangea_token = SecretStr(os.getenv(pangea_token_env_key_name, ""))
 
         if not pangea_token or not pangea_token.get_secret_value() or pangea_token.get_secret_value() == "":
-            raise ValueError(f"'{pangea_token_env_key_name}' must be or set or passed")
+            raise ValueError(f"'{pangea_token_env_key_name}' must be set or passed")
 
         super().__init__()
 
@@ -91,7 +91,7 @@ class PangeaIpIntelGuard(BaseTool):
 
         # Check if the score is higher than the set threshold for any ip
         if any(ip_data.score >= self._threshold for ip_data in intel.result.data.values()):
-            raise MaliciousIpAddressesError("Malicious IPs found in the provided input")
+            raise MaliciousIpAddressesError("Malicious IPs found in the provided input.")
 
         # Return unchanged input_text
         return input_text

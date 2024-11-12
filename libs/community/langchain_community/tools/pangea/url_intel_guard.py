@@ -10,7 +10,7 @@ try:
     from pangea.services import UrlIntel
 except ImportError as e:
     raise ImportError(
-        "Cannot import pangea, please install `pip install pangea-sdk==5.2.0b2`."
+        "Cannot import pangea, please install `pip install pangea-sdk==5.1.0`."
     ) from e
 
 
@@ -36,7 +36,7 @@ class PangeaUrlIntelGuard(BaseTool):
 
         # Initialize parameters
         pangea_token = SecretStr(os.getenv("PANGEA_URL_INTEL_TOKEN"))
-        config = PangeaConfig(domain="dev.aws.pangea.cloud")
+        config = PangeaConfig(domain="gcp.us.pangea.cloud")
 
         # Setup Pangea Url Intel Tool
         tool = PangeaUrlIntelGuard(pangea_token=pangea_token, config_id="", config=config)
@@ -69,7 +69,7 @@ class PangeaUrlIntelGuard(BaseTool):
             pangea_token = SecretStr(os.getenv(pangea_token_env_key_name, ""))
 
         if not pangea_token or not pangea_token.get_secret_value() or pangea_token.get_secret_value() == "":
-            raise ValueError(f"'{pangea_token_env_key_name}' must be or set or passed")
+            raise ValueError(f"'{pangea_token_env_key_name}' must be set or passed")
 
         super().__init__()
 
@@ -80,7 +80,6 @@ class PangeaUrlIntelGuard(BaseTool):
 
         # Find all URLs using the regex pattern
         urls = re.findall(self._url_pattern, input_text)
-        print(f"URLs found: {urls}")
 
         # If no urls found return the original text
         if len(urls) == 0:
@@ -88,12 +87,11 @@ class PangeaUrlIntelGuard(BaseTool):
 
         # Check the reputation of each URL found
         intel = self._url_intel_client.reputation_bulk(urls)
-        print(f"Response: {intel.result}")
         assert intel.result
 
         # Check if the score is higher than the set threshold for any url
         if any(url_data.score >= self._threshold for url_data in intel.result.data.values()):
-            raise MaliciousUrlsError("Malicious URLs found in the provided input")
+            raise MaliciousUrlsError("Malicious URLs found in the provided input.")
 
         # Return unchanged input_text
         return input_text

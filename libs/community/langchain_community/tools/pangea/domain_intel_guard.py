@@ -10,7 +10,7 @@ try:
     from pangea.services import DomainIntel
 except ImportError as e:
     raise ImportError(
-        "Cannot import pangea, please install `pip install pangea-sdk==5.2.0b2`."
+        "Cannot import pangea, please install `pip install pangea-sdk==5.1.0`."
     ) from e
 
 
@@ -38,7 +38,7 @@ class PangeaDomainIntelGuard(BaseTool):
 
         # Initialize parameters
         pangea_token = SecretStr(os.getenv("PANGEA_DOMAIN_INTEL_TOKEN"))
-        config = PangeaConfig(domain="dev.aws.pangea.cloud")
+        config = PangeaConfig(domain="gcp.us.pangea.cloud")
 
         # Setup Pangea Domain Intel Tool
         tool = PangeaDomainIntelGuard(pangea_token=pangea_token, config_id="", config=config)
@@ -72,7 +72,7 @@ class PangeaDomainIntelGuard(BaseTool):
             pangea_token = SecretStr(os.getenv(pangea_token_env_key_name, ""))
 
         if not pangea_token or not pangea_token.get_secret_value() or pangea_token.get_secret_value() == "":
-            raise ValueError(f"'{pangea_token_env_key_name}' must be or set or passed")
+            raise ValueError(f"'{pangea_token_env_key_name}' must be set or passed")
 
         super().__init__()
 
@@ -94,7 +94,7 @@ class PangeaDomainIntelGuard(BaseTool):
 
         # Check if the score is higher than the set threshold for any domain
         if any(domain_data.score >= self._threshold for domain_data in intel.result.data.values()):
-            raise MaliciousDomainsError("Malicious domains found in the provided input")
+            raise MaliciousDomainsError("Malicious domains found in the provided input.")
 
         # Return unchanged input_text
         return input_text
