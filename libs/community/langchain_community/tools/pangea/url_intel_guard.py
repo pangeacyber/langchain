@@ -16,8 +16,7 @@ except ImportError as e:
 
 class PangeaUrlGuardError(RuntimeError):
     """
-    PangeaUrlGuardError is a exception raised in an unexpected scenario or 
-    when malicious URLs are found in the input text.
+    Exception raised for unexpected scenarios or when malicious URLs are found.
     """
     def __init__(self, message: str) -> None:
         super().__init__(message)
