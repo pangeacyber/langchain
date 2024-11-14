@@ -29,7 +29,7 @@ class PangeaGuardTransformer(BaseDocumentTransformer):
             # Initialize parameters
             pangea_token = SecretStr(os.getenv("PANGEA_AI_GUARD_TOKEN"))
             config = PangeaConfig(domain="aws.us.pangea.cloud")
-            recipe="pangea_prompt_guard"
+            recipe="pangea_ingestion_guard"
 
             pangea_guard_transformer = PangeaGuardTransformer(pangea_token=pangea_token, config_id="", config=config, recipe=recipe)
             guarded_documents = pangea_guard_transformer.transform_documents(docs)
@@ -43,15 +43,16 @@ class PangeaGuardTransformer(BaseDocumentTransformer):
         pangea_token: Optional[SecretStr] = None,
         config: PangeaConfig | None = None,
         config_id: str | None = None,
-        pangea_token_env_key_name: str = "PANGEA_AI_GUARD_TOKEN",
         recipe: str = "pangea_ingestion_guard",
+        pangea_token_env_key_name: str = "PANGEA_AI_GUARD_TOKEN",
     ) -> None:
         """
         Args:
-            pangea_token: Pangea Prompt Guard API token.
-            config_id: Pangea Prompt Guard configuration ID.
+            pangea_token: Pangea AI Guard API token.
+            config_id: Pangea AI Guard configuration ID.
             config: PangeaConfig object.
             recipe: Pangea AI Guard recipe.
+            pangea_token_env_key_name: Environment variable key name for Pangea AI Guard token.
         """
                 
         if not pangea_token:
