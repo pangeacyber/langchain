@@ -44,7 +44,7 @@ class PangeaGuardTransformer(BaseDocumentTransformer):
         config: PangeaConfig | None = None,
         config_id: str | None = None,
         pangea_token_env_key_name: str = "PANGEA_AI_GUARD_TOKEN",
-        recipe: str = "pangea_prompt_guard",
+        recipe: str = "pangea_ingestion_guard",
     ) -> None:
         """
         Args:
