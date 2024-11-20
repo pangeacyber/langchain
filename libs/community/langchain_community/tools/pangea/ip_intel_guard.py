@@ -1,6 +1,6 @@
 import os
 import re
-from langchain.tools import BaseTool
+from langchain_community.tools.pangea.base import PangeaBaseTool
 
 from pydantic import SecretStr
 from typing import Optional, ClassVar
@@ -16,15 +16,16 @@ except ImportError as e:
 
 class PangeaIpGuardError(RuntimeError):
     """
-    Exception raised for unexpected scenarios or when malicious IPs are found.
+    Exception raised for unexpected scenarios.
     """
     def __init__(self, message: str) -> None:
         super().__init__(message)
 
 
-class PangeaIpIntelGuard(BaseTool):
+class PangeaIpIntelGuard(PangeaBaseTool):
     """
-    This tool guard finds malicious ips in the input text using the Pangea IP Intel service.
+    Detect malicious IP addresses in the input text using the Pangea IP Intel service.
+
     Details of the service can be found here:
         [IP Intel API Reference docs](https://pangea.cloud/docs/api/ip-intel)
 
@@ -39,17 +40,18 @@ class PangeaIpIntelGuard(BaseTool):
             from pydantic import SecretStr
 
             # Initialize parameters
-            pangea_token = SecretStr(os.getenv("PANGEA_IP_INTEL_TOKEN"))
+            token = SecretStr(os.getenv("PANGEA_IP_INTEL_TOKEN"))
             config = PangeaConfig(domain="aws.us.pangea.cloud")
 
             # Setup Pangea Ip Intel Tool
-            tool = PangeaIpIntelGuard(pangea_token=pangea_token, config_id="", config=config)
+            tool = PangeaIpIntelGuard(token=token, config_id="", config=config)
             tool.run("Please click here to confirm your order:http://113.235.101.11:54384/order/123 .  Leave us a feedback here: http://malware123.com/feedback")
     """
 
-    name: str = "Pangea Ip Intel Tool"
+    name: str = "pangea-ip-intel-guard-tool"
     """Name of the tool."""
-    description: str = "This tool finds malicious ips in the input text using the Pangea Ip Intel service."
+
+    description: str = "Detects malicious IP addresses in the input text using the Pangea IP Intel service."
     """Description of the tool."""
 
     _threshold: int = 80
@@ -58,29 +60,29 @@ class PangeaIpIntelGuard(BaseTool):
     def __init__(
         self,
         *,
-        pangea_token: Optional[SecretStr] = None,
+        token: Optional[SecretStr] = None,
         config: PangeaConfig | None = None,
         threshold: int = 80,
-        pangea_token_env_key_name: str = "PANGEA_IP_INTEL_TOKEN",
+        token_env_key_name: str = "PANGEA_IP_INTEL_TOKEN",
     ) -> None:
         """
         Args:
-            pangea_token: Pangea API token.
+            token: Pangea API token.
             config: PangeaConfig object.
         """
 
-        if not pangea_token:
-            pangea_token = SecretStr(os.getenv(pangea_token_env_key_name, ""))
+        if not token:
+            token = SecretStr(os.getenv(token_env_key_name, ""))
 
-        if not pangea_token or not pangea_token.get_secret_value() or pangea_token.get_secret_value() == "":
-            raise ValueError(f"'{pangea_token_env_key_name}' must be set or passed")
+        if not token or not token.get_secret_value() or token.get_secret_value() == "":
+            raise ValueError(f"'{token_env_key_name}' must be set or passed")
 
         super().__init__()
 
         self._threshold = threshold
-        self._ip_intel_client = IpIntel(token=pangea_token.get_secret_value(), config=config)
+        self._ip_intel_client = IpIntel(token=token.get_secret_value(), config=config)
 
-    def _run(self, input_text: str) -> str:
+    def _process_text(self, input_text: str) -> str:
 
         # Find all IPs using the regex pattern
         ips = re.findall(self._ip_pattern, input_text)
@@ -91,13 +93,13 @@ class PangeaIpIntelGuard(BaseTool):
 
         # Check the reputation of each Ip found
         intel = self._ip_intel_client.reputation_bulk(ips)
-        
+
         if not intel.result:
             raise PangeaIpGuardError("Result is invalid or missing")
 
-        # Check if the score is higher than the set threshold for any ip
+        # Replace the input text with a warning message
+        # if the score exceeds the defined threshold for any IP address.
         if any(ip_data.score >= self._threshold for ip_data in intel.result.data.values()):
-            raise PangeaIpGuardError("Malicious IPs found in the provided input.")
+            input_text = "Malicious IP(s) found in the provided input."
 
-        # Return unchanged input_text
         return input_text

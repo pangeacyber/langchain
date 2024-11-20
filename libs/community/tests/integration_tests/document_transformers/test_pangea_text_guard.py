@@ -33,7 +33,7 @@ def test_pangea_text_guard() -> None:
     config = PangeaConfig(domain=get_test_domain(env))
     recipe="pangea_ingestion_guard"
 
-    pangea_guard_transformer = PangeaGuardTransformer(pangea_token=SecretStr(get_test_token(env)), config=config, recipe=recipe)
+    pangea_guard_transformer = PangeaGuardTransformer(token=SecretStr(get_test_token(env)), config=config, recipe=recipe)
     guarded_documents = pangea_guard_transformer.transform_documents(docs)
 
     assert len(guarded_documents) == 5

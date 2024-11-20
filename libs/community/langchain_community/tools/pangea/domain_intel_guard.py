@@ -1,6 +1,6 @@
 import os
 import re
-from langchain.tools import BaseTool
+from langchain_community.tools.pangea.base import PangeaBaseTool
 
 from pydantic import SecretStr
 from typing import Optional, ClassVar
@@ -16,14 +16,15 @@ except ImportError as e:
 
 class PangeaDomainGuardError(RuntimeError):
     """
-    Exception raised for unexpected scenarios or when malicious IPs are found.
+    Exception raised for unexpected scenarios.
     """
     def __init__(self, message: str) -> None:
         super().__init__(message)
 
-class PangeaDomainIntelGuard(BaseTool):
+class PangeaDomainIntelGuard(PangeaBaseTool):
     """
-    This tool guard finds malicious domains in the input text using the Pangea Domain Intel service.
+    Detect malicious domains in the input text using the Pangea Domain Intel service.
+
     Details of the service can be found here:
         [Domain Intel API Reference docs](https://pangea.cloud/docs/api/domain-intel)
 
@@ -38,53 +39,53 @@ class PangeaDomainIntelGuard(BaseTool):
             from pydantic import SecretStr
 
             # Initialize parameters
-            pangea_token = SecretStr(os.getenv("PANGEA_DOMAIN_INTEL_TOKEN"))
+            token = SecretStr(os.getenv("PANGEA_DOMAIN_INTEL_TOKEN"))
             config = PangeaConfig(domain="aws.us.pangea.cloud")
 
             # Setup Pangea Domain Intel Tool
-            tool = PangeaDomainIntelGuard(pangea_token=pangea_token, config_id="", config=config)
+            tool = PangeaDomainIntelGuard(token=token, config_id="", config=config)
             tool.run("Please click here to confirm your order:http://737updatesboeing.com/order/123 .  Leave us a feedback here: http://malware123.com/feedback")
     """
 
-    name: str = "Pangea Domain Intel Tool"
+    name: str = "pangea-domain-intel-guard-tool"
     """Name of the tool."""
-    description: str = "This tool finds malicious domains in the input text using the Pangea Domain Intel service."
+
+    description: str = "Detects malicious domains in the input text using the Pangea Domain Intel service."
     """Description of the tool."""
 
     _threshold: int = 80
-    _domain_pattern: ClassVar[str] = r"https?://(?:www\.)?([a-zA-Z0-9.-]+)(?::\d+)?"
+    _domain_pattern: ClassVar[str] = r"\b(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}\b"
 
     def __init__(
         self,
         *,
-        pangea_token: Optional[SecretStr] = None,
+        token: Optional[SecretStr] = None,
         config: PangeaConfig | None = None,
         threshold: int = 80,
-        pangea_token_env_key_name: str = "PANGEA_DOMAIN_INTEL_TOKEN",
+        token_env_key_name: str = "PANGEA_DOMAIN_INTEL_TOKEN",
     ) -> None:
         """
         Args:
-            pangea_token: Pangea API token.
+            token: Pangea API token.
             config: PangeaConfig object.
         """
-        # add an option to get the token from vautl
-        # an insecure way is to pass is thro env variable...
-        if not pangea_token:
-            pangea_token = SecretStr(os.getenv(pangea_token_env_key_name, ""))
 
-        if not pangea_token or not pangea_token.get_secret_value() or pangea_token.get_secret_value() == "":
-            raise ValueError(f"'{pangea_token_env_key_name}' must be set or passed")
+        if not token:
+            token = SecretStr(os.getenv(token_env_key_name, ""))
+
+        if not token or not token.get_secret_value() or token.get_secret_value() == "":
+            raise ValueError(f"'{token_env_key_name}' must be set or passed")
 
         super().__init__()
 
         self._threshold = threshold
-        self._domain_intel_client = DomainIntel(token=pangea_token.get_secret_value(), config=config)
+        self._domain_intel_client = DomainIntel(token=token.get_secret_value(), config=config)
 
-    def _run(self, input_text: str) -> str:
+    def _process_text(self, input_text: str) -> str:
 
         # Find all Domains using the regex pattern
         domains = re.findall(self._domain_pattern, input_text)
-        
+
         # If no domains found return the original text
         if len(domains) == 0:
             return input_text
@@ -95,9 +96,9 @@ class PangeaDomainIntelGuard(BaseTool):
         if not intel.result:
             raise PangeaDomainGuardError("Result is invalid or missing")
 
-        # Check if the score is higher than the set threshold for any domain
+        # Replace the input text with a warning message
+        # if the score exceeds the defined threshold for any domain.
         if any(domain_data.score >= self._threshold for domain_data in intel.result.data.values()):
-            raise PangeaDomainGuardError("Malicious domains found in the provided input.")
+            input_text = "Malicious domain(s) found in the provided input."
 
-        # Return unchanged input_text
         return input_text
