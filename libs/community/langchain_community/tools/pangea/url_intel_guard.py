@@ -39,46 +39,47 @@ class PangeaUrlIntelGuard(BaseTool):
             from pydantic import SecretStr
 
             # Initialize parameters
-            pangea_token = SecretStr(os.getenv("PANGEA_URL_INTEL_TOKEN"))
+            token = SecretStr(os.getenv("PANGEA_URL_INTEL_TOKEN"))
             config = PangeaConfig(domain="aws.us.pangea.cloud")
 
             # Setup Pangea Url Intel Tool
-            tool = PangeaUrlIntelGuard(pangea_token=pangea_token, config_id="", config=config)
+            tool = PangeaUrlIntelGuard(token=token, config_id="", config=config)
             tool.run("Please click here to confirm your order:http://113.235.101.11:54384/order/123 .  Leave us a feedback here: http://malware123.com/feedback")
     """
 
-    name: str = "Pangea URL Intel Tool"
     """Name of the tool."""
-    description: str = "This tool finds malicious urls in the input text using the Pangea URL Intel service."
+    name: str = "pangea-url-intel-guard-tool"
+
     """Description of the tool."""
+    description: str = "This tool finds malicious urls in the input text using the Pangea URL Intel service."
 
     _threshold: int = 80
-    _url_pattern: ClassVar[str] = r"(https?://(?:[a-zA-Z0-9.-]+|(?:\d{1,3}\.){3}\d{1,3})(?::\d+)?)(?:/|$)"
+    _url_pattern: ClassVar[str] = r"https?://(?:[-\w.]|%[\da-fA-F]{2})+(?::\d+)?(?:/[\w./?%&=-]*)?(?<!\.)"
 
     def __init__(
         self,
         *,
-        pangea_token: Optional[SecretStr] = None,
+        token: Optional[SecretStr] = None,
         config: PangeaConfig | None = None,
         threshold: int = 80,
-        pangea_token_env_key_name: str = "PANGEA_URL_INTEL_TOKEN",
+        token_env_key_name: str = "PANGEA_URL_INTEL_TOKEN",
     ) -> None:
         """
         Args:
-            pangea_token: Pangea API token.
+            token: Pangea API token.
             config: PangeaConfig object.
         """
 
-        if not pangea_token:
-            pangea_token = SecretStr(os.getenv(pangea_token_env_key_name, ""))
+        if not token:
+            token = SecretStr(os.getenv(token_env_key_name, ""))
 
-        if not pangea_token or not pangea_token.get_secret_value() or pangea_token.get_secret_value() == "":
-            raise ValueError(f"'{pangea_token_env_key_name}' must be set or passed")
+        if not token or not token.get_secret_value() or token.get_secret_value() == "":
+            raise ValueError(f"'{token_env_key_name}' must be set or passed")
 
         super().__init__()
 
         self._threshold = threshold
-        self._url_intel_client = UrlIntel(token=pangea_token.get_secret_value(), config=config)
+        self._url_intel_client = UrlIntel(token=token.get_secret_value(), config=config)
 
     def _run(self, input_text: str) -> str:
 
