@@ -27,11 +27,11 @@ class PangeaGuardTransformer(BaseDocumentTransformer):
             from langchain_community.document_transformers.pangea_text_guard import PangeaGuardTransformer, PangeaConfig
 
             # Initialize parameters
-            pangea_token = SecretStr(os.getenv("PANGEA_AI_GUARD_TOKEN"))
+            token = SecretStr(os.getenv("PANGEA_AI_GUARD_TOKEN"))
             config = PangeaConfig(domain="aws.us.pangea.cloud")
             recipe="pangea_ingestion_guard"
 
-            pangea_guard_transformer = PangeaGuardTransformer(pangea_token=pangea_token, config_id="", config=config, recipe=recipe)
+            pangea_guard_transformer = PangeaGuardTransformer(token=token, config_id="", config=config, recipe=recipe)
             guarded_documents = pangea_guard_transformer.transform_documents(docs)
     """
 
@@ -40,29 +40,29 @@ class PangeaGuardTransformer(BaseDocumentTransformer):
 
     def __init__(
         self,
-        pangea_token: Optional[SecretStr] = None,
+        token: Optional[SecretStr] = None,
         config: PangeaConfig | None = None,
         config_id: str | None = None,
         recipe: str = "pangea_ingestion_guard",
-        pangea_token_env_key_name: str = "PANGEA_AI_GUARD_TOKEN",
+        token_env_key_name: str = "PANGEA_AI_GUARD_TOKEN",
     ) -> None:
         """
         Args:
-            pangea_token: Pangea AI Guard API token.
+            token: Pangea AI Guard API token.
             config_id: Pangea AI Guard configuration ID.
             config: PangeaConfig object.
             recipe: Pangea AI Guard recipe.
-            pangea_token_env_key_name: Environment variable key name for Pangea AI Guard token.
+            token_env_key_name: Environment variable key name for Pangea AI Guard token.
         """
-                
-        if not pangea_token:
-            pangea_token = SecretStr(os.getenv(pangea_token_env_key_name, ""))
 
-        if not pangea_token or not pangea_token.get_secret_value() or pangea_token.get_secret_value() == "":
-            raise ValueError(f"'{pangea_token_env_key_name}' must be set or passed")
-        
+        if not token:
+            token = SecretStr(os.getenv(token_env_key_name, ""))
+
+        if not token or not token.get_secret_value() or token.get_secret_value() == "":
+            raise ValueError(f"'{token_env_key_name}' must be set or passed")
+
         self._recipe = recipe
-        self._client = AIGuard(token=pangea_token.get_secret_value(), config=config, config_id=config_id)
+        self._client = AIGuard(token=token.get_secret_value(), config=config, config_id=config_id)
 
     async def atransform_documents(
         self, documents: Sequence[Document], **kwargs: Any
@@ -73,10 +73,10 @@ class PangeaGuardTransformer(BaseDocumentTransformer):
         self, documents: Sequence[Document], **kwargs: Any
     ) -> Sequence[Document]:
         """
-        Guard documents to monitor, sanitize, and protect sensitive data 
+        Guard documents to monitor, sanitize, and protect sensitive data
         using Pangea's AI Guard service.
-        """ 
-        
+        """
+
         guarded_documents = []
         for document in documents:
             guarded = self._client.guard_text(document.page_content, recipe=self._recipe)
