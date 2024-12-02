@@ -23,7 +23,8 @@ class PangeaDomainGuardError(RuntimeError):
 
 class PangeaDomainIntelGuard(BaseTool):
     """
-    This tool guard finds malicious domains in the input text using the Pangea Domain Intel service.
+    Find malicious domains in the input text using the Pangea Domain Intel service.
+
     Details of the service can be found here:
         [Domain Intel API Reference docs](https://pangea.cloud/docs/api/domain-intel)
 
@@ -46,11 +47,11 @@ class PangeaDomainIntelGuard(BaseTool):
             tool.run("Please click here to confirm your order:http://737updatesboeing.com/order/123 .  Leave us a feedback here: http://malware123.com/feedback")
     """
 
-    """Name of the tool."""
     name: str = "pangea-domain-intel-guard-tool"
+    """Name of the tool."""
 
-    """Description of the tool."""
     description: str = "This tool finds malicious domains in the input text using the Pangea Domain Intel service."
+    """Description of the tool."""
 
     _threshold: int = 80
     _domain_pattern: ClassVar[str] = r"\b(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}\b"

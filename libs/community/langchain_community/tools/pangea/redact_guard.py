@@ -22,7 +22,8 @@ class PangeaRedactGuardError(RuntimeError):
 
 class PangeaRedactGuard(BaseTool):
     """
-    This tool guard redacts sensitive information from prompts using the Pangea Redact service.
+    Redact sensitive and high-risk information from prompts and responses using the Pangea Redact service.
+
     Details of the service can be found here:
         [Redact API Reference docs](https://pangea.cloud/docs/api/redact)
 
@@ -50,11 +51,11 @@ class PangeaRedactGuard(BaseTool):
             redact_guard.invoke("My name is Dennis Nedry and my email is you.didnt.say.the.magic.word@gmail.com")
     """
 
-    """Name of the tool."""
     name: str = "pangea-redact-guard-tool"
+    """Name of the tool."""
 
-    """Description of the tool."""
     description: str = "This tool redacts sensitive information from prompts using the Pangea Redact service."
+    """Description of the tool."""
 
     def __init__(
         self,

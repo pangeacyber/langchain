@@ -24,7 +24,8 @@ class PangeaIpGuardError(RuntimeError):
 
 class PangeaIpIntelGuard(BaseTool):
     """
-    This tool guard finds malicious ips in the input text using the Pangea IP Intel service.
+    Find malicious IP addresses in the input text using the Pangea IP Intel service.
+
     Details of the service can be found here:
         [IP Intel API Reference docs](https://pangea.cloud/docs/api/ip-intel)
 
@@ -47,11 +48,11 @@ class PangeaIpIntelGuard(BaseTool):
             tool.run("Please click here to confirm your order:http://113.235.101.11:54384/order/123 .  Leave us a feedback here: http://malware123.com/feedback")
     """
 
-    """Name of the tool."""
     name: str = "pangea-ip-intel-guard-tool"
+    """Name of the tool."""
 
-    """Description of the tool."""
     description: str = "This tool finds malicious ips in the input text using the Pangea Ip Intel service."
+    """Description of the tool."""
 
     _threshold: int = 80
     _ip_pattern: ClassVar[str] = r"\b(?:\d{1,3}\.){3}\d{1,3}\b"

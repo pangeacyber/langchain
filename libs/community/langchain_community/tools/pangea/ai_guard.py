@@ -25,7 +25,7 @@ class PangeaAIGuardError(RuntimeError):
 @beta(message="Pangea AI Guard service is in beta. Subject to change.")
 class PangeaAIGuard(BaseTool):
     """
-    Uses Pangea's AI Guard service to monitor, sanitize, and protect sensitive data.
+    Use Pangea's AI Guard service to monitor, sanitize, and protect sensitive data.
 
     Requirements:
         - Environment variable ``PANGEA_AI_GUARD_TOKEN`` must be set,
@@ -51,8 +51,8 @@ class PangeaAIGuard(BaseTool):
             ai_guard.invoke("My Name is John Doe and my email is john.doe@email.com.  My credit card number is 5555555555554444.")
     """
 
-    """Name of the tool"""
     name: str = "pangea-ai-guard-tool"
+    """Name of the tool."""
 
     description: str = "Uses Pangea's AI Guard service to monitor, sanitize, and protect sensitive data."
     """Description of the tool."""

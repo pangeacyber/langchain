@@ -24,7 +24,8 @@ class PangeaUrlGuardError(RuntimeError):
 
 class PangeaUrlIntelGuard(BaseTool):
     """
-    This tool finds malicious urls in the input text using the Pangea URL Intel service.
+    Find malicious URLs in the input text using the Pangea URL Intel service.
+
     Details of the service can be found here:
         [URL Intel API Reference docs](https://pangea.cloud/docs/api/url-intel)
 
@@ -47,11 +48,11 @@ class PangeaUrlIntelGuard(BaseTool):
             tool.run("Please click here to confirm your order:http://113.235.101.11:54384/order/123 .  Leave us a feedback here: http://malware123.com/feedback")
     """
 
-    """Name of the tool."""
     name: str = "pangea-url-intel-guard-tool"
+    """Name of the tool."""
 
-    """Description of the tool."""
     description: str = "This tool finds malicious urls in the input text using the Pangea URL Intel service."
+    """Description of the tool."""
 
     _threshold: int = 80
     _url_pattern: ClassVar[str] = r"https?://(?:[-\w.]|%[\da-fA-F]{2})+(?::\d+)?(?:/[\w./?%&=-]*)?(?<!\.)"
