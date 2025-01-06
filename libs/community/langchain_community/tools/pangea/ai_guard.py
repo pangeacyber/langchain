@@ -1,9 +1,10 @@
 import os
-from typing import Optional
+from typing import Optional, Union
 from pydantic import SecretStr
 
 from langchain_core._api import beta
 from langchain_community.tools.pangea.base import PangeaBaseTool
+import json
 
 try:
     from pangea import PangeaConfig
@@ -102,4 +103,5 @@ class PangeaAIGuard(PangeaBaseTool):
         if guarded.result.redacted_prompt:
             input_text = guarded.result.redacted_prompt
 
-        return input_text
+        # return json.dumps({"redacted_prompt": input_text, "response": guarded.result.dict()})
+        return json.dumps(guarded.result.model_dump())
