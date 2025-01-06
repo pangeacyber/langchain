@@ -147,7 +147,7 @@ class PangeaAuditLogTracer(BaseTracer):
 
             # update status based on malicious count
             if malicious_count is None:
-                    status = "benign"
+                status = "benign"
             else:
                 status = "malicious" if malicious_count > 0 else "benign"
 
@@ -273,12 +273,6 @@ class PangeaAuditLogTracer(BaseTracer):
         audit_dict = self._convert_run_to_audit_schema(run)
     
         if(_get_run_type(run) != "chain"):
-            # import inspect
-            # caller_frame = inspect.stack()[1]
-            # caller_function_name = caller_frame.function
-            # print("##############################################################################################################")
-            # print(f"{caller_function_name}                  - {_get_run_type(run)}              - {run.name} ") 
-            # print("##############################################################################################################")
             try:
                 self._client.log_bulk([audit_dict])
             except Exception as e:
