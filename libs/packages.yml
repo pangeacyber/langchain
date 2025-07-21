@@ -696,3 +696,7 @@ packages:
 - name: langchain-tensorlake
   path: .
   repo: tensorlakeai/langchain-tensorlake
+  path: .
+- name: langchain-pangea
+  repo: pangeacyber/langchain-pangea
+  path: .
